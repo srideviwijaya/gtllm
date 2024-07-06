@@ -3,6 +3,6 @@ torch
 numpy
 transformers
 huggingface_hub
-acceleraate
+accelerate
 bitsandbytes
 scipy
