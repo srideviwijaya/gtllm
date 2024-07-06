@@ -1,7 +1,7 @@
 To launch the Triton inference server
 
 1. Run a docker container with the tritonserver image. Make sure you are inside the triton folder.
-    docker run --gpus=all -it --shm-size=1g --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ${PWD}:/workspace/ -v ${PWD}/model_repository:/models nvcr.io/nvidia/tritonserver:24.04-py3
+docker run --gpus=all -it --shm-size=1g --rm -p8000:8000 -p8001:8001 -p8002:8002 -v ${PWD}:/workspace/ -v ${PWD}/model_repository:/models nvcr.io/nvidia/tritonserver:24.04-py3
 2. Inside the container, install all necessary packages (refer to requirements.txt).
 3. Launch the triton inference server: tritonserver --model-repository=/models --log-verbose=1
 
