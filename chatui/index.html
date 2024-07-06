@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat UI</title>
+    <style>
+        /* Basic styling for chat UI */
+        .chat-container {
+            width: 600px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-messages {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+        .chat-input button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-left: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="message" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script>
+        async function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            const chatMessages = document.getElementById('chat-messages');
+
+            if (message.trim() === '') return;
+
+            // Display user's message
+            const userMessage = document.createElement('div');
+            userMessage.textContent = `User: ${message}`;
+            chatMessages.appendChild(userMessage);
+
+            // Send message to the backend API
+            const response = await fetch('http://127.0.0.1:5000/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+
+            // Display bot's response
+            const botMessage = document.createElement('div');
+            botMessage.textContent = `Bot: ${data.response}`;
+            chatMessages.appendChild(botMessage);
+
+            // Clear the input field
+            messageInput.value = '';
+        }
+    </script>
+</body>
+</html>
