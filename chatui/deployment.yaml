@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: chatui
-          image: docker.io/shrued/minikube-flask-app
+          image: docker.io/srideviwijaya/chatui
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
