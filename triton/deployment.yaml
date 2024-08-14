@@ -1,37 +1,35 @@
 apiVersion: apps/v1
- kind: Deployment
- metadata:
-   name: triton
-   labels:
-     app: triton
- spec:
-   replicas: 3
-   selector:
-     matchLabels:
-       app: triton
-   template:
-     metadata:
-       labels:
-         app: triton
-     spec:
-       volumes:
-       - name: models
-         nfs:
-           server: <IP address of the server>
-           path: <path/to/flowerdemo/model/files>
-           readOnly: false
-       containers:
-         - name: triton
-           ports:
-           - containerPort: 8000
-             name: http-triton
-           - containerPort: 8001
-             name: grpc-triton
-           - containerPort: 8002
-             name: metrics-triton
-           image: "nvcr.io/nvidia/tritonserver:24.04-py3"
-           volumeMounts:
-           - mountPath: /models
-             name: models
-           command: ["/bin/sh", "-c"]
-           args: ["cd /models /opt/tritonserver/bin/tritonserver --model-repository=/models --allow-gpu-metrics=false --strict-model-config=false"]
+kind: Deployment
+metadata:
+  name: triton
+  labels:
+    app: triton
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: triton
+  template:
+    metadata:
+      labels:
+        app: triton
+    spec:
+      volumes:
+      - name: local-volume
+        persistentVolumeClaim:
+          claimName: local-pvc
+      containers:
+        - name: triton
+          ports:
+          - containerPort: 8000
+            name: http-triton
+          - containerPort: 8001
+            name: grpc-triton
+          - containerPort: 8002
+            name: metrics-triton
+          image: "nvcr.io/nvidia/tritonserver:24.04-py3"
+          volumeMounts:
+          - mountPath: /models
+            name: local-volume
+          command: ["/bin/sh", "-c"]
+          args: ["cd /models /opt/tritonserver/bin/tritonserver --model-repository=/models --allow-gpu-metrics=false --strict-model-config=false"]

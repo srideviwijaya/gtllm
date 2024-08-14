@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: chatuisss-service
+  name: chatui-service
 spec:
   selector:
     app: chatui

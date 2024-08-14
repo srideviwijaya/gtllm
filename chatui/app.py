@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-TRITON_SERVER_URL = "http://localhost:8000"  # Replace with your Triton server URL
+TRITON_SERVER_URL = "http://0.0.0.0:8000"  # Replace with your Triton server URL
 
 @app.route('/chat', methods=['POST'])
 def chat():
