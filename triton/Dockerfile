@@ -1,6 +1,2 @@
-FROM python:3.7
-RUN mkdir /triton
-WORKDIR /triton/
-ADD . /triton/
+FROM nvcr.io/nvidia/tritonserver:24.04-py3 
 RUN pip install -r requirements.txt
-CMD ["python"]
