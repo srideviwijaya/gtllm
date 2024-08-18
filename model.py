@@ -5,7 +5,7 @@ import torch
 torch.cuda.is_available()
 # Output should be True
 
-access_token = "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"
+access_token = "" ## Add your HF credentials
 model = "meta-llama/Llama-2-70b-chat-hf"
 
 tokenizer = AutoTokenizer.from_pretrained(model, token=access_token)
