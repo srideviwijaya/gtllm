@@ -7,7 +7,7 @@ spec:
     app: chatui
   ports:
     - protocol: "TCP"
-      port: 6000
+      port: 5000
       targetPort: 5000
   type: LoadBalancer
 
@@ -32,3 +32,6 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
+          env:
+          - name: TRITON_SERVER_URL
+            value: "http://10.107.39.50:8000"

@@ -33,7 +33,7 @@ spec:
           - mountPath: /models
             name: local-volume
           command: ["/bin/sh", "-c"]
-          args: ["tritonserver --model-repository=/models --allow-gpu-metrics=false --strict-model-config=false"]
+          args: ["tritonserver --model-repository=/models --log-verbose=1"]
           resources:
             limits:
               nvidia.com/gpu: 1
