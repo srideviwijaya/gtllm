@@ -16,8 +16,9 @@ spec:
     spec:
       volumes:
       - name: local-volume
-        persistentVolumeClaim:
-          claimName: local-pvc
+        hostPath: {
+          path: /mnt/data
+        }
       containers:
         - name: triton
           ports:
@@ -27,9 +28,12 @@ spec:
             name: grpc-triton
           - containerPort: 8002
             name: metrics-triton
-          image: "nvcr.io/nvidia/tritonserver:24.04-py3"
+          image: docker.io/srideviwijaya/triton-server
           volumeMounts:
           - mountPath: /models
             name: local-volume
           command: ["/bin/sh", "-c"]
-          args: ["cd /models /opt/tritonserver/bin/tritonserver --model-repository=/models --allow-gpu-metrics=false --strict-model-config=false"]
+          args: ["tritonserver --model-repository=/models --allow-gpu-metrics=false --strict-model-config=false"]
+          resources:
+            limits:
+              nvidia.com/gpu: 1

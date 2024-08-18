@@ -20,4 +20,4 @@ spec:
       port: 8002
       name: metrics
       targetPort: 8002
-  type: LoadBalancer 
+  type: LoadBalancer
