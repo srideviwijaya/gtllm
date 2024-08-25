@@ -7,4 +7,4 @@ spec:
     - name: triton-client
       image: nvcr.io/nvidia/tritonserver:24.04-py3-sdk
       command: ["/bin/sh","-c"]
-      args: ["perf_analyzer -m llamav2 -u http://10.107.39.50:8000"]
+      args: ["perf_analyzer -m llamav2 --concurrency-range 1:4 -u http://10.96.64.169:8000"]
