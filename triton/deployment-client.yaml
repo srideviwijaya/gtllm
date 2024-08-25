@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: triton-client
+spec:
+  containers:
+    - name: triton-client
+      image: nvcr.io/nvidia/tritonserver:24.04-py3-sdk
+      command: ["/bin/sh","-c"]
+      args: ["perf_analyzer -m llamav2 -u http://10.107.39.50:8000"]
