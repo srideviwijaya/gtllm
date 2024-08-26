@@ -26,7 +26,7 @@
 
 1) Setup a cluster, such as using Minikube.
 2) There is deployment.yaml file in Triton folder, run:
-  > kubectl apply -f deployment.yaml -f service.yaml
+   > kubectl apply -f deployment.yaml -f service.yaml
 It should create triton deployment and service, make sure you mount the folder where the model_repository is as /mnt/data. 
 3) Once the server is running, we need to forward the port used by the pod to be accessible as localhost from our computer. Run:
   > kubectl port-forward svc/triton 8000:8000
