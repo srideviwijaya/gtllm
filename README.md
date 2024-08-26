@@ -24,29 +24,23 @@
 
 # Deploy in a Kubernetes Cluster
 
-1. Setup a cluster, such as using Minikube.
-
-2. There is deployment.yaml file in Triton folder, run:
-    > kubectl apply -f deployment.yaml -f service.yaml
-
-It should create triton deployment and service, make sure you mount the folder where the model_repository is as /mnt/data. 
-
-3. Once the server is running, we need to forward the port used by the pod to be accessible as localhost from our computer. Run:
-    > kubectl port-forward svc/triton 8000:8000
-  
-We can perform health check using curl command:
+1) Setup a cluster, such as using Minikube.
+2) There is deployment.yaml file in Triton folder, run:
+  > kubectl apply -f deployment.yaml -f service.yaml
+  It should create triton deployment and service, make sure you mount the folder where the model_repository is as /mnt/data. 
+3) Once the server is running, we need to forward the port used by the pod to be accessible as localhost from our computer. Run:
+  > kubectl port-forward svc/triton 8000:8000
+    We can perform health check using curl command:
     > curl -X POST localhost:8000/v2/repository/index
-4. Take note of the triton service IP address, we need to use this for our Chat UI and Locust.
-    > kubectl get svc
-5. Under chatui folder, update the env variable TRITON_SERVER_URL to be using the IP address obtained from step 4 above. Then run:
-    > kubectl apply -f deployment.yaml
-  
-It will create a Chat UI deployment as well as service. We also need to fo port-forwarding:
-    > kubectl port-forward svc/chatui 5000:5000
-6. Open index.html in a browser, a dialog box should be available and we can query the LLM.
-7. To setup Locust, go to locust folder and run:
-    > kubectl apply -f scripts-cm.yaml -f master-deployment.yaml -f service.yaml -f slave-deployment.yaml
-  
+4) Take note of the triton service IP address, we need to use this for our Chat UI and Locust.
+  > kubectl get svc
+5) Under chatui folder, update the env variable TRITON_SERVER_URL to be using the IP address obtained from step 4 above. Then run:
+  > kubectl apply -f deployment.yaml
+  It will create a Chat UI deployment as well as service. We also need to fo port-forwarding:
+  > kubectl port-forward svc/chatui 5000:5000
+6) Open index.html in a browser, a dialog box should be available and we can query the LLM.
+7) To setup Locust, go to locust folder and run:
+  > kubectl apply -f scripts-cm.yaml -f master-deployment.yaml -f service.yaml -f slave-deployment.yaml
   The Locust server is listening on port 8089, we need to forward this port as well:
-    > kubectl port-forward svc/locust-master 8089:8089
-8. We can then access the Locust dashboard and perform load testing.
+  > kubectl port-forward svc/locust-master 8089:8089
+8) We can then access the Locust dashboard and perform load testing.
