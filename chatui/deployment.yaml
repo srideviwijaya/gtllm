@@ -34,4 +34,4 @@ spec:
             - containerPort: 5000
           env:
           - name: TRITON_SERVER_URL
-            value: "http://10.96.64.169:8000"
+            value: "http://10.108.165.72:8000" #update the server url

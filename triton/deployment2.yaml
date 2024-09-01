@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triton2
+  labels:
+    app: triton2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: triton2
+  template:
+    metadata:
+      labels:
+        app: triton2
+    spec:
+      volumes:
+      - name: local-volume
+        hostPath: {
+          path: /mnt/data
+        }
+      containers:
+        - name: triton2
+          ports:
+          - containerPort: 8000
+            name: http-triton2
+          - containerPort: 8001
+            name: grpc-triton2
+          - containerPort: 8002
+            name: metrics-triton
+          image: nvcr.io/nvidia/tritonserver:24.04-py3
+          volumeMounts:
+          - mountPath: /models
+            name: local-volume
+          command: ["/bin/sh", "-c"]
+          args: 
+          - |
+            pip install --no-cache-dir app torch numpy transformers accelerate bitsandbytes scipy && \
+            echo "Packages installed, now running the main application" &&\
+            exec tritonserver --model-repository=/models --log-verbose=1
+          resources:
+            limits:
+              nvidia.com/gpu: 1

@@ -43,4 +43,4 @@ data:
         wait_time = between(1, 5)  # Simulate user wait time between requests
 
         # Set host to the URL of your application
-        host = "http://10.96.64.169:8000"
+        host = "http://10.108.165.72:8000" # update the host url

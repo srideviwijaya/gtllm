@@ -1,32 +1,21 @@
-import app
-import os
-import json
 import triton_python_backend_utils as pb_utils
 import numpy as np
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM,TextIteratorStreamer
-import huggingface_hub
-from threading import Thread
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-huggingface_hub.login(token="") ## Add your HF credentials
-
 class TritonPythonModel:
     def initialize(self, args):
-        # self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map=device)
-        self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map=device)
-        self.model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", 
-                                                          load_in_8bit= True, 
-                                                          torch_dtype=torch.float16, 
-                                                          device_map=device)
+        self.tokenizer = AutoTokenizer.from_pretrained("/models/llamav2/1/", device_map=device) # add model repo
+        self.model = AutoModelForCausalLM.from_pretrained("/models/llamav2/1/", device_map=device) # add model repo
         self.model.resize_token_embeddings(len(self.tokenizer))
 
     def get_prompt(self, message: str, 
                    chat_history: list[tuple[str, str]],
                    system_prompt: str) -> str:
         texts = [f'<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n']
-        # The first user input is _not_ stripped
+
         do_strip = False
         for user_input, response in chat_history:
             user_input = user_input.strip() if do_strip else user_input
@@ -39,14 +28,11 @@ class TritonPythonModel:
     def execute(self, requests):
         responses = []
         for request in requests:
-            # Decode the Byte Tensor into Text 
             inputs = pb_utils.get_input_tensor_by_name(request, "prompt")
             
             inputs = inputs.as_numpy()
-            
-            # Call the Model pipeline 
-            DEFAULT_SYSTEM_PROMPT = """You are a helpful AI assistant. Keep short answers of no more than 2 sentences."""
-            # print(inputs)
+
+            DEFAULT_SYSTEM_PROMPT = """You are a helpful AI assistant. Keep answers short and concise but still comprehensive."""
             
             prompts = [self.get_prompt(i.decode(), [], DEFAULT_SYSTEM_PROMPT) for i in inputs]
             self.tokenizer.pad_token = "[PAD]"
@@ -65,7 +51,6 @@ class TritonPythonModel:
 
             output = self.tokenizer.batch_decode(output_sequences, skip_special_tokens=True)
                         
-            # Encode the text to byte tensor to send back
             inference_response = pb_utils.InferenceResponse(
             output_tensors=[
                 pb_utils.Tensor(
