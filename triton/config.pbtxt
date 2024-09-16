@@ -1,0 +1,25 @@
+name: "llamav2"
+backend: "python"
+max_batch_size: 8
+input [
+  {
+    name: "INPUT_TEXT"
+    data_type: TYPE_STRING  # Data type of input tensor (e.g., int64 for token IDs)
+    dims: [ -1 ]           # Variable-length input (e.g., for tokenized text)
+  }
+]
+
+# Output tensor configuration
+output [
+  {
+    name: "OUTPUT_TEXT"
+    data_type: TYPE_STRING  # Data type of output tensor
+    dims: [ -1 ]           # Output will have the same variable length as input
+  }
+]
+instance_group [
+  {
+    kind: KIND_GPU
+  }
+]
+dynamic_batching { }

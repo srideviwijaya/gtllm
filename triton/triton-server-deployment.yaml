@@ -19,10 +19,6 @@ spec:
         hostPath: {
           path: /mnt/data
         }
-      - name: dshm
-        emptyDir:
-          medium: Memory
-          sizeLimit: 1Gi
       containers:
         - name: triton
           ports:
@@ -36,8 +32,6 @@ spec:
           volumeMounts:
           - mountPath: /models
             name: local-volume
-          - mountPath: /dev/shm
-            name: dshm
           command: ["/bin/sh", "-c"]
           args: ["tritonserver --model-repository=/models --log-verbose=1"]
           resources:

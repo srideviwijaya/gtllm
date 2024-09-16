@@ -1,8 +1,7 @@
-app
 torch
-numpy
 transformers
-huggingface_hub
 accelerate
 bitsandbytes
-scipy
+huggingface_hub
+sentencepiece
+protobuf
