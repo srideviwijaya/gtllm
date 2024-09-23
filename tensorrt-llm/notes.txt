@@ -29,3 +29,28 @@ python3 tools/fill_template.py -i llama_ifb/ensemble/config.pbtxt triton_max_bat
 python3 tools/fill_template.py -i llama_ifb/tensorrt_llm/config.pbtxt triton_backend:tensorrtllm,triton_max_batch_size:4,decoupled_mode:False,max_beam_width:1,engine_dir:${ENGINE_PATH},max_tokens_in_paged_kv_cache:2560,max_attention_window_size:2560,kv_cache_free_gpu_mem_fraction:0.5,exclude_input_in_output:True,enable_kv_cache_reuse:False,batching_strategy:inflight_fused_batching,max_queue_delay_microseconds:0
 
 python3 scripts/launch_triton_server.py --world_size 1 --model_repo=llama_ifb/ --http_port 8000
+
+
+
+cp -R /mnt/tensorrtllm_backend/all_models/inflight_batcher_llm /opt/tritonserver/.
+
+# preprocessing
+TOKENIZER_DIR=/mnt/Llama-2-7b-chat-hf/
+TOKENIZER_TYPE=auto
+ENGINE_DIR=/mnt/llama/engines
+DECOUPLED_MODE=false
+MODEL_FOLDER=/opt/tritonserver/inflight_batcher_llm
+MAX_BATCH_SIZE=8
+INSTANCE_COUNT=1
+MAX_QUEUE_DELAY_MS=10000
+TRITON_BACKEND=tensorrtllm
+FILL_TEMPLATE_SCRIPT=/mnt/tensorrtllm_backend/tools/fill_template.py
+python3 ${FILL_TEMPLATE_SCRIPT} -i ${MODEL_FOLDER}/preprocessing/config.pbtxt tokenizer_dir:${TOKENIZER_DIR},tokenizer_type:${TOKENIZER_TYPE},triton_max_batch_size:${MAX_BATCH_SIZE},preprocessing_instance_count:${INSTANCE_COUNT}
+python3 ${FILL_TEMPLATE_SCRIPT} -i ${MODEL_FOLDER}/postprocessing/config.pbtxt tokenizer_dir:${TOKENIZER_DIR},tokenizer_type:${TOKENIZER_TYPE},triton_max_batch_size:${MAX_BATCH_SIZE},postprocessing_instance_count:${INSTANCE_COUNT}
+python3 ${FILL_TEMPLATE_SCRIPT} -i ${MODEL_FOLDER}/tensorrt_llm_bls/config.pbtxt triton_max_batch_size:${MAX_BATCH_SIZE},decoupled_mode:${DECOUPLED_MODE},bls_instance_count:${INSTANCE_COUNT}
+python3 ${FILL_TEMPLATE_SCRIPT} -i ${MODEL_FOLDER}/ensemble/config.pbtxt triton_max_batch_size:${MAX_BATCH_SIZE}
+python3 ${FILL_TEMPLATE_SCRIPT} -i ${MODEL_FOLDER}/tensorrt_llm/config.pbtxt triton_backend:${TRITON_BACKEND},triton_max_batch_size:${MAX_BATCH_SIZE},decoupled_mode:${DECOUPLED_MODE},engine_dir:${ENGINE_DIR},max_queue_delay_microseconds:${MAX_QUEUE_DELAY_MS},batching_strategy:inflight_fused_batching
+
+
+
+python3 /mnt/tensorrtllm_backend/scripts/launch_triton_server.py --world_size=1 --model_repo=/opt/tritonserver/inflight_batcher_llm
